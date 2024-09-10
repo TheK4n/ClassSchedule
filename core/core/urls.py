@@ -19,7 +19,7 @@ from django.shortcuts import redirect
 from django.urls import path, include
 
 urlpatterns = [
-    path("", lambda _: redirect("today/", permanent=True)),
+    path("", lambda _: redirect("today/2611/", permanent=False)),
     path("", include("table.urls")),
     path('admin/', admin.site.urls),
 ]

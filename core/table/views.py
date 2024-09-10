@@ -1,51 +1,17 @@
 import datetime
 from typing import Literal
 
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.db.models import Q
 from django.core.handlers.wsgi import WSGIRequest
-from django.http import HttpResponse
+from django.http import JsonResponse
 
 from core.settings import REVERSE_PARITY
 from .models import Exercise
+from .converters import DateConverter
 
 
-def get_current_week() -> int:
-    return datetime.datetime.now().isocalendar().week
-
-
-def get_current_weekday() -> int:
-    return datetime.datetime.now().weekday()
-
-
-def not_parity(parity: Literal["EVE", "ODD"]) -> Literal["EVE", "ODD"]:
-    if parity == "ODD":
-        return "EVE"
-    else:
-        return "ODD"
-
-
-def get_week_parity(weekday: int) -> Literal["EVE", "ODD"]:
-    current_parity = weekday % 2 == 0
-    if REVERSE_PARITY:
-        return "EVE" if current_parity else "ODD"
-    else:
-        return "ODD" if current_parity else "EVE"
-
-
-def is_valid_parity(parity: Literal["EVE", "ODD"]) -> bool:
-    return parity in ("EVE", "ODD")
-
-
-def validate_week_day(weekday: int) -> int:
-    if weekday > 5:
-        return 5
-    elif weekday < 0:
-        return 0
-    return weekday
-
-
-def get_week_day_name_from_number(weekday: int) -> str:
+def get_weekday_name(weekday: int) -> str:
     return [
         "Понедельник",
         "Вторник",
@@ -57,16 +23,23 @@ def get_week_day_name_from_number(weekday: int) -> str:
     ][weekday]
 
 
-def get_week_parity_name(parity: Literal["EVE", "ODD"]) -> Literal["Чет", "Нечет"]:
+def get_parity_name(parity: Literal["EVE", "ODD"]) -> Literal["Чет", "Нечет"]:
     return "Чет" if parity == "EVE" else "Нечет"
 
 
-def get_next_weekday(weekday: int):
-    return 0 if weekday == 5 else weekday + 1
+def get_week_parity(date: datetime.date) -> Literal["EVE", "ODD"]:
+    current_parity = date.isocalendar().week % 2 == 0
+    if REVERSE_PARITY:
+        return "EVE" if current_parity else "ODD"
+    else:
+        return "ODD" if current_parity else "EVE"
 
 
-def get_exercises_by_weekday(weekday: int) -> list[Exercise]:
-    parity = get_week_parity(weekday)
+def get_weekday(date: datetime.date) -> Literal[0, 1, 2, 3, 4, 5, 6]:
+    return date.weekday()
+
+
+def get_exercises_by_weekday(weekday: int, parity: Literal["EVE", "ODD"]) -> list[Exercise]:
     q = Q(parity=parity) | Q(parity="COM")
 
     return list(Exercise.objects \
@@ -75,40 +48,55 @@ def get_exercises_by_weekday(weekday: int) -> list[Exercise]:
         .order_by('time_start'))
 
 
-def today(request: WSGIRequest, group: str):
-    weekday = request.GET.get("weekday", None)
-    parity = request.GET.get("parity", None)
+def get_exercises_by_date(date: datetime.date) -> list[Exercise]:
+    weekday = get_weekday(date)
+    week_parity = get_week_parity(date)
 
-    if weekday is None:
-        current_weekday: int = get_current_weekday()
-    else:
-        current_weekday: int = int(weekday)
+    return get_exercises_by_weekday(weekday, week_parity)
 
-    current_weekday = validate_week_day(current_weekday)
-    current_weekday_name = get_week_day_name_from_number(current_weekday)
 
-    if parity is None:
-        current_parity = get_week_parity(current_weekday)
-    else:
-        current_parity: Literal["EVE", "ODD"] = parity
+def get_table_by_date(_: WSGIRequest, date: datetime.date, group: str):
+    exercises = get_exercises_by_date(date)
 
-    if not is_valid_parity(current_parity):
-        return HttpResponse("<h2>422 Unprocessable Entity</h2>", status=422)
+    weekday = get_weekday(date)
+    weekday_name = get_weekday_name(weekday)
+    week_parity = get_week_parity(date)
+    week_parity_name = get_parity_name(week_parity)
 
-    exercises = get_exercises_by_weekday(current_weekday)
+    res = {"weekday": weekday_name, "week_parity_name": week_parity_name,  "exercises": []}
 
-    current_parity_name = get_week_parity_name(current_parity)
+    for exercise in exercises:
+        res["exercises"].append({
+            "name": exercise.name,
+            "time_start": exercise.time_start,
+            "teacher": exercise.teacher,
+            "auditory": exercise.auditory,
+        })
 
-    next_weekday = get_next_weekday(current_weekday)
+    return JsonResponse(res)
+
+
+def render_date(request: WSGIRequest, date: datetime.date, group: str):
+    today_exercises = get_exercises_by_date(date)
+
+    current_weekday_name = get_weekday_name(date.weekday())
+    current_parity = get_week_parity(date)
+    current_parity_name = get_parity_name(current_parity)
+
+    next_day = date + datetime.timedelta(days=1)
+    next_day_uri_part = next_day.strftime(DateConverter.format)
 
     return render(request, 'today.html', {
         "host": request.get_host(),
         "weekday_name": current_weekday_name,
-        "next_weekday": next_weekday,
-        "parity": current_parity,
         "parity_name": current_parity_name,
-        "next_parity": not_parity(current_parity) if next_weekday == 0 else current_parity,
-        "exercises": exercises,
+        "exercises": today_exercises,
         "group": group,
+        "next_date": next_day_uri_part,
     })
 
+
+def redirect_today(request: WSGIRequest, group: str):
+    today = datetime.date.today()
+    today_uri_part = today.strftime(DateConverter.format)
+    return redirect(f'/{today_uri_part}/{group}')
