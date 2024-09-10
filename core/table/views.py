@@ -61,9 +61,8 @@ def get_table_by_date(_: WSGIRequest, date: datetime.date, group: str):
     weekday = get_weekday(date)
     weekday_name = get_weekday_name(weekday)
     week_parity = get_week_parity(date)
-    week_parity_name = get_parity_name(week_parity)
 
-    res = {"weekday": weekday_name, "week_parity_name": week_parity_name,  "exercises": []}
+    res = {"weekday": weekday_name, "week_parity": week_parity,  "exercises": []}
 
     for exercise in exercises:
         res["exercises"].append({
