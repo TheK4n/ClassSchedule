@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+
+
+IMAGE="schedule"
+OUTPORT=8000
+ENVFILE=".env"
+LOCAL_DB="./core/db"
+CONTAINER_DB="/app/core/db"
+NAME="schedule"
+
+
+cmd_build() {
+	docker build -t "$IMAGE" .
+}
+
+cmd_collectstatic() {
+	docker run --rm --env-file "$ENVFILE" -v "${LOCAL_DB}:${CONTAINER_DB}" --name "${NAME}_static" "$IMAGE" ./manage.py collectstatic --noinput
+}
+
+cmd_migrate() {
+	docker run --rm --env-file "$ENVFILE" -v "${LOCAL_DB}:${CONTAINER_DB}" --name "${NAME}_migrate" "$IMAGE" ./manage.py migrate
+}
+
+cmd_all_build() {
+    cmd_build
+    cmd_collectstatic
+    cmd_migrate
+}
+
+cmd_run() {
+	docker run --env-file "$ENVFILE" -p "${OUTPORT}:80" -v "${LOCAL_DB}:${CONTAINER_DB}" --name "$NAME" "$IMAGE"
+}
+
+cmd_rund() {
+	docker run -d --restart=always --env-file "$ENVFILE" -p "${OUTPORT}:80" -v "${LOCAL_DB}:${CONTAINER_DB}" --name "$NAME" "$IMAGE"
+}
+
+cmd_stop() {
+    docker stop "$NAME"
+}
+
+cmd_rm() {
+    docker rm "$NAME"
+}
+
+cmd_clean() {
+    docker rmi "$IMAGE"
+}
+
+
+case "$1" in
+    build) shift;   cmd_all_build  ;;
+    run) shift;     cmd_run        ;;
+    rund) shift;    cmd_rund       ;;
+    stop) shift;    cmd_stop       ;;
+    rm) shift;      cmd_rm         ;;
+    clean) shift;   cmd_clean      ;;
+esac
+exit 0
