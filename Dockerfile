@@ -13,4 +13,4 @@ COPY . .
 
 WORKDIR /app/core
 
-CMD ["gunicorn", "core.wsgi:application", "-b", "0.0.0.0:80"]
+CMD ["gunicorn", "core.wsgi:application", "-b", "0.0.0.0:80", "-w", "3"]
