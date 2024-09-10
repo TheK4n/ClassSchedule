@@ -1,4 +1,5 @@
 import datetime
+from typing import Literal
 
 from django.shortcuts import render
 from django.db.models import Q
@@ -7,36 +8,39 @@ from core.settings import REVERSE_PARITY
 from .models import Exercise
 
 
-def is_current_week_parity_even() -> bool:
-    current_week_number = datetime.datetime.now().isocalendar().week
-    current_parity = current_week_number % 2 == 0
-
-    return not current_parity if REVERSE_PARITY else current_parity
+def get_current_week() -> int:
+    return datetime.datetime.now().isocalendar().week
 
 
-def not_parity(parity: str) -> str:
+def get_current_weekday() -> int:
+    return datetime.datetime.now().weekday()
+
+
+def not_parity(parity: Literal["EVE"] | Literal["ODD"]) -> Literal["EVE"] | Literal["ODD"]:
     if parity == "ODD":
         return "EVE"
     else:
         return "ODD"
 
 
-def today(request):
-    weekday = request.GET.get("weekday", None)
-    parity = request.GET.get("parity", None)
-
-    if weekday is None:
-        current_week_day = datetime.datetime.now().weekday()
+def get_week_parity(weekday: int) -> Literal["EVE"] | Literal["ODD"]:
+    current_parity = weekday % 2 == 0
+    if REVERSE_PARITY:
+        return "EVE" if current_parity else "ODD"
     else:
-        current_week_day = int(weekday)
-
-    if current_week_day > 5:
-        current_week_day = 5
-    elif current_week_day < 0:
-        current_week_day = 0
+        return "ODD" if current_parity else "EVE"
 
 
-    current_week_day_name = [
+def validate_week_day(weekday: int) -> int:
+    if weekday > 5:
+        return 5
+    elif weekday < 0:
+        return 0
+    return weekday
+
+
+def get_week_day_name_from_number(weekday: int) -> str:
+    return [
         "Понедельник",
         "Вторник",
         "Среда",
@@ -44,24 +48,54 @@ def today(request):
         "Пятница",
         "Суббота",
         "Воскресенье"
-    ][current_week_day]
+    ][weekday]
+
+
+def get_week_parity_name(parity: Literal["EVE"] | Literal["ODD"]) -> Literal["Чет"] | Literal["Нечет"]:
+    return "Чет" if parity == "EVE" else "Нечет"
+
+
+def get_next_weekday(weekday: int):
+    return 0 if weekday == 5 else weekday + 1
+
+
+def get_exercises_by_weekday(weekday: int) -> list[Exercise]:
+    parity = get_week_parity(weekday)
+    q = Q(parity=parity) | Q(parity="COM")
+
+    return list(Exercise.objects \
+        .filter(weekday=weekday) \
+        .filter(q) \
+        .order_by('time_start'))
+
+
+
+def today(request):
+    weekday = request.GET.get("weekday", None)
+    parity = request.GET.get("parity", None)
+
+    if weekday is None:
+        current_weekday: int = get_current_weekday()
+    else:
+        current_weekday: int = int(weekday)
+
+    current_weekday = validate_week_day(current_weekday)
+    current_weekday_name = get_week_day_name_from_number(current_weekday)
 
     if parity is None:
-        current_parity = "EVE" if is_current_week_parity_even() else "ODD"
+        current_parity = get_week_parity(current_weekday)
     else:
         current_parity = parity
 
-    q = Q(parity=current_parity) | Q(parity="COM")
+    exercises = get_exercises_by_weekday(current_weekday)
 
-    exercises = Exercise.objects.filter(weekday=current_week_day).filter(q).order_by('time_start')
+    current_parity_name = get_week_parity_name(current_parity)
 
-    current_parity_name = "Чет" if current_parity == "EVE" else "Нечет"
-
-    next_weekday = 0 if current_week_day == 5 else current_week_day + 1
+    next_weekday = get_next_weekday(current_weekday)
 
     return render(request, 'today.html', {
         "host": request.get_host(),
-        "weekday_name": current_week_day_name,
+        "weekday_name": current_weekday_name,
         "next_weekday": next_weekday,
         "parity": current_parity,
         "parity_name": current_parity_name,

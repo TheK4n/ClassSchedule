@@ -121,7 +121,7 @@ LANGUAGE_CODE = 'RU-ru'
 TIME_ZONE = 'UTC'
 USE_L10N = True
 
-TIME_INPUT_FORMATS = ('%I:%M %p',)
+TIME_INPUT_FORMATS = ('%H:%M',)
 TIME_FORMAT = 'g:i A'
 
 USE_I18N = True

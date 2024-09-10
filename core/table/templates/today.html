@@ -8,11 +8,13 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
         <style>
             .buttons_container {
-              width: 40%;
+              width: 100%;
               margin-left: auto;
               margin-right: auto;
               justify-content: center;
               display: flex;
+              position: fixed;
+              bottom: 20%;
             }
 
             .button_inner {
@@ -32,7 +34,7 @@
             }
 
             .custom-a-size {
-              font-size: 30px;
+              font-size: 40px;
             }
         </style>
     </head>
@@ -44,10 +46,10 @@
 
         <div class="buttons_container">
             <div class="button_inner">
-                <a class="button btn btn-primary custom-a-size" href="http://{{ host }}/today">На сегодня</a>
+                <a class="button btn btn-primary custom-a-size" href="http://{{ host }}/today">Сегодняшний день</a>
             </div>
             <div class="button_inner">
-                <a class="button btn btn-primary custom-a-size" href="http://{{ host }}/today?weekday={{ next_weekday }}&parity={{ next_parity }}">На завтра</a>
+                <a class="button btn btn-primary custom-a-size" href="http://{{ host }}/today?weekday={{ next_weekday }}&parity={{ next_parity }}">Завтрашний день</a>
             </div>
         </div>
 
