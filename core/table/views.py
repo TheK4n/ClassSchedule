@@ -22,11 +22,7 @@ def not_parity(parity: str) -> str:
 
 
 def today(request):
-
     weekday = request.GET.get("weekday", None)
-
-
-
     parity = request.GET.get("parity", None)
 
     if weekday is None:
@@ -64,6 +60,7 @@ def today(request):
     next_weekday = 0 if current_week_day == 5 else current_week_day + 1
 
     return render(request, 'today.html', {
+        "host": request.get_host(),
         "weekday_name": current_week_day_name,
         "next_weekday": next_weekday,
         "parity": current_parity,
