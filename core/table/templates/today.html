@@ -14,7 +14,7 @@
               justify-content: center;
               display: flex;
               position: fixed;
-              bottom: 20%;
+              bottom: 10%;
             }
 
             .button_inner {
@@ -46,10 +46,10 @@
 
         <div class="buttons_container">
             <div class="button_inner">
-                <a class="button btn btn-primary custom-a-size" href="http://{{ host }}/today">Сегодняшний день</a>
+                <a class="button btn btn-primary custom-a-size" href="http://{{ host }}//today/{{ group }}">Сегодняшний день</a>
             </div>
             <div class="button_inner">
-                <a class="button btn btn-primary custom-a-size" href="http://{{ host }}/today?weekday={{ next_weekday }}&parity={{ next_parity }}">Завтрашний день</a>
+                <a class="button btn btn-primary custom-a-size" href="http://{{ host }}/today/{{ group }}?weekday={{ next_weekday }}&parity={{ next_parity }}">Завтрашний день</a>
             </div>
         </div>
 

@@ -20,6 +20,6 @@ from django.urls import path, include
 
 urlpatterns = [
     path("", lambda _: redirect("today/", permanent=True)),
-    path("today/", include("table.urls")),
+    path("", include("table.urls")),
     path('admin/', admin.site.urls),
 ]

@@ -3,6 +3,8 @@ from typing import Literal
 
 from django.shortcuts import render
 from django.db.models import Q
+from django.core.handlers.wsgi import WSGIRequest
+from django.http import HttpResponse
 
 from core.settings import REVERSE_PARITY
 from .models import Exercise
@@ -16,19 +18,23 @@ def get_current_weekday() -> int:
     return datetime.datetime.now().weekday()
 
 
-def not_parity(parity: Literal["EVE"] | Literal["ODD"]) -> Literal["EVE"] | Literal["ODD"]:
+def not_parity(parity: Literal["EVE", "ODD"]) -> Literal["EVE", "ODD"]:
     if parity == "ODD":
         return "EVE"
     else:
         return "ODD"
 
 
-def get_week_parity(weekday: int) -> Literal["EVE"] | Literal["ODD"]:
+def get_week_parity(weekday: int) -> Literal["EVE", "ODD"]:
     current_parity = weekday % 2 == 0
     if REVERSE_PARITY:
         return "EVE" if current_parity else "ODD"
     else:
         return "ODD" if current_parity else "EVE"
+
+
+def is_valid_parity(parity: Literal["EVE", "ODD"]) -> bool:
+    return parity in ("EVE", "ODD")
 
 
 def validate_week_day(weekday: int) -> int:
@@ -51,7 +57,7 @@ def get_week_day_name_from_number(weekday: int) -> str:
     ][weekday]
 
 
-def get_week_parity_name(parity: Literal["EVE"] | Literal["ODD"]) -> Literal["Чет"] | Literal["Нечет"]:
+def get_week_parity_name(parity: Literal["EVE", "ODD"]) -> Literal["Чет", "Нечет"]:
     return "Чет" if parity == "EVE" else "Нечет"
 
 
@@ -69,8 +75,7 @@ def get_exercises_by_weekday(weekday: int) -> list[Exercise]:
         .order_by('time_start'))
 
 
-
-def today(request):
+def today(request: WSGIRequest, group: str):
     weekday = request.GET.get("weekday", None)
     parity = request.GET.get("parity", None)
 
@@ -85,7 +90,10 @@ def today(request):
     if parity is None:
         current_parity = get_week_parity(current_weekday)
     else:
-        current_parity = parity
+        current_parity: Literal["EVE", "ODD"] = parity
+
+    if not is_valid_parity(current_parity):
+        return HttpResponse("<h2>422 Unprocessable Entity</h2>", status=422)
 
     exercises = get_exercises_by_weekday(current_weekday)
 
@@ -99,8 +107,8 @@ def today(request):
         "next_weekday": next_weekday,
         "parity": current_parity,
         "parity_name": current_parity_name,
-        "next_parity": not_parity(parity) if next_weekday == 0 else current_parity,
+        "next_parity": not_parity(current_parity) if next_weekday == 0 else current_parity,
         "exercises": exercises,
-        "group": "2611",
+        "group": group,
     })
 
