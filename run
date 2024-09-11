@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 
 
+set -eu
+
+
 IMAGE="schedule"
 OUTPORT=8000
 ENVFILE=".env"
