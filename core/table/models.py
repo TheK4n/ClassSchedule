@@ -2,6 +2,14 @@ from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 
 
+class ClassGroup(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    name = models.CharField(max_length=40, unique=True)
+
+    def __str__(self):
+        return self.name
+
+
 class Exercise(models.Model):
     class Parity(models.TextChoices):
         EVEN = "EVE", "Чет"
@@ -17,6 +25,7 @@ class Exercise(models.Model):
         SATURDAY = 5, "Суббота"
 
     id = models.BigAutoField(primary_key=True)
+    group = models.ForeignKey(ClassGroup, on_delete=models.PROTECT)
     weekday = models.IntegerField(
         null=False,
         choices=Weekday.choices,
@@ -25,8 +34,8 @@ class Exercise(models.Model):
             MinValueValidator(0)
         ]
     )
-    name = models.CharField(max_length=80)
     time_start = models.TimeField()
+    name = models.CharField(max_length=80)
     teacher = models.CharField(max_length=80)
     auditory = models.CharField(max_length=20)
     parity = models.CharField(
@@ -34,4 +43,7 @@ class Exercise(models.Model):
         choices=Parity.choices,
         default=Parity.COMMON,
     )
+
+    def __str__(self):
+        return self.name
 

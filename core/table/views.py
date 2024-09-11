@@ -1,13 +1,13 @@
 import datetime
 from typing import Literal
 
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 from django.db.models import Q
 from django.core.handlers.wsgi import WSGIRequest
 from django.http import JsonResponse
 
 from core.settings import REVERSE_PARITY
-from .models import Exercise
+from .models import Exercise, ClassGroup
 from .converters import DateConverter
 
 
@@ -52,24 +52,35 @@ def get_weekday(date: datetime.date) -> Literal[0, 1, 2, 3, 4, 5, 6]:
     return date.weekday()
 
 
-def get_exercises_by_weekday(weekday: int, parity: Literal["EVE", "ODD"]) -> list[Exercise]:
+def render_groups(request: WSGIRequest):
+    groups = ClassGroup.objects.all()
+    return render(request, 'groups.html', {
+        "host": request.get_host(),
+        "groups": groups,
+    })
+
+
+def get_exercises_by_weekday_and_by_group(weekday: int, parity: Literal["EVE", "ODD"], group: str) -> list[Exercise]:
     q = Q(parity=parity) | Q(parity="COM")
 
     return list(Exercise.objects \
+        .filter(group__name=group) \
         .filter(weekday=weekday) \
         .filter(q) \
         .order_by('time_start'))
 
 
-def get_exercises_by_date(date: datetime.date) -> list[Exercise]:
+def get_exercises_by_date_and_by_group(date: datetime.date, group: str) -> list[Exercise]:
     weekday = get_weekday(date)
     week_parity = get_week_parity(date)
 
-    return get_exercises_by_weekday(weekday, week_parity)
+    return get_exercises_by_weekday_and_by_group(weekday, week_parity, group)
 
 
 def get_table_by_date(_: WSGIRequest, date: datetime.date, group: str):
-    exercises = get_exercises_by_date(date)
+    get_object_or_404(ClassGroup, name=group)
+
+    exercises = get_exercises_by_date_and_by_group(date, group)
 
     weekday = get_weekday(date)
     weekday_name = get_weekday_name(weekday)
@@ -89,7 +100,9 @@ def get_table_by_date(_: WSGIRequest, date: datetime.date, group: str):
 
 
 def render_date(request: WSGIRequest, date: datetime.date, group: str):
-    today_exercises = get_exercises_by_date(date)
+    get_object_or_404(ClassGroup, name=group)
+
+    today_exercises = get_exercises_by_date_and_by_group(date, group)
 
     current_weekday_name = get_weekday_name(date.weekday())
     current_parity = get_week_parity(date)

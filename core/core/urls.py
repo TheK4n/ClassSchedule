@@ -31,7 +31,6 @@ static_urlpatterns = [
 ]
 
 urlpatterns = [
-    path("", lambda _: redirect("today/2611/", permanent=False)),
     path("", include("table.urls")),
     path('admin/', admin.site.urls),
     path("", include(static_urlpatterns)),

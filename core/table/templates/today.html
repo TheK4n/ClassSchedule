@@ -17,6 +17,14 @@
               bottom: 10%;
             }
 
+            .header_buttons {
+              width: 100%;
+              margin-left: auto;
+              margin-right: auto;
+              justify-content: center;
+              display: flex;
+            }
+
             .button_inner {
               margin: 0 auto;
             }
@@ -43,6 +51,9 @@
         </style>
     </head>
     <body>
+        <div class="header_buttons">
+            <a class="button btn btn-primary custom-a-size" href="http://{{ host }}">Home</a>
+        </div>
 
         <div>День: {{ weekday_name }}</div>
         <div>Четность: {{ parity_name }}</div>
