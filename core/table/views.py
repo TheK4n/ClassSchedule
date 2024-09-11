@@ -78,7 +78,16 @@ def get_exercises_by_date_and_by_group(date: datetime.date, group: str) -> list[
     return get_exercises_by_weekday_and_by_group(weekday, week_parity, group)
 
 
-def get_table_by_date(request: WSGIRequest, date: datetime.date, group: str):
+def get_all_groups(_: WSGIRequest):
+    res = {"groups": []}
+
+    for group in ClassGroup.objects.all():
+        res["groups"].append(group.name)
+
+    return JsonResponse(res)
+
+
+def get_table_by_date(request: WSGIRequest, group: str, date: datetime.date):
     try:
         _ = ClassGroup.objects.get(name=group)
     except ClassGroup.DoesNotExist:
@@ -103,8 +112,11 @@ def get_table_by_date(request: WSGIRequest, date: datetime.date, group: str):
     return JsonResponse(res)
 
 
-def render_date(request: WSGIRequest, date: datetime.date, group: str):
-    get_object_or_404(ClassGroup, name=group)
+def render_date(request: WSGIRequest, group: str, date: datetime.date):
+    try:
+        _ = ClassGroup.objects.get(name=group)
+    except ClassGroup.DoesNotExist:
+        raise Http404
 
     today_exercises = get_exercises_by_date_and_by_group(date, group)
 
@@ -128,4 +140,4 @@ def render_date(request: WSGIRequest, date: datetime.date, group: str):
 def redirect_today(request: WSGIRequest, group: str):
     today = datetime.date.today()
     today_uri_part = today.strftime(DateConverter.format)
-    return redirect(f'/{today_uri_part}/{group}')
+    return redirect(f'/{group}/{today_uri_part}')
