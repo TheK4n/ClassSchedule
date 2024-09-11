@@ -55,6 +55,12 @@ cmd_createsuperuser() {
 }
 
 
+if [[ ! -v 1 ]]; then
+    cmd_run
+    exit 0
+fi
+
+
 case "$1" in
     build) shift;   cmd_all_build  ;;
     run) shift;     cmd_run        ;;
