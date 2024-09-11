@@ -7,8 +7,8 @@ set -eu
 IMAGE="schedule"
 OUTPORT=8000
 ENVFILE=".env"
-LOCAL_DB="./core/db"
-CONTAINER_DB="/app/core/db"
+LOCAL_DB="./data"
+CONTAINER_DB="/app/data"
 NAME="schedule"
 
 
