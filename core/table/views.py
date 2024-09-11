@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.db.models import Q
 from django.core.handlers.wsgi import WSGIRequest
 from django.http import JsonResponse
+from django.http import Http404
 
 from core.settings import REVERSE_PARITY
 from .models import Exercise, ClassGroup
@@ -24,7 +25,7 @@ def get_weekday_name(weekday: int) -> str:
 
 
 def inverse_parity(parity: Literal["EVE", "ODD"]) -> Literal["ODD", "EVE"]:
-    d = {
+    d: dict[Literal["EVE", "ODD"], Literal["ODD", "EVE"]] = {
         "EVE": "ODD",
         "ODD": "EVE"
     }
@@ -41,7 +42,7 @@ def get_week_parity(date: datetime.date) -> Literal["EVE", "ODD"]:
 
 
 def get_parity_name(parity: Literal["EVE", "ODD"]) -> Literal["Чет", "Нечет"]:
-    d = {
+    d: dict[Literal["EVE", "ODD"], Literal["Чет", "Нечет"]] = {
         "EVE": "Чет",
         "ODD": "Нечет"
     }
@@ -77,8 +78,11 @@ def get_exercises_by_date_and_by_group(date: datetime.date, group: str) -> list[
     return get_exercises_by_weekday_and_by_group(weekday, week_parity, group)
 
 
-def get_table_by_date(_: WSGIRequest, date: datetime.date, group: str):
-    get_object_or_404(ClassGroup, name=group)
+def get_table_by_date(request: WSGIRequest, date: datetime.date, group: str):
+    try:
+        _ = ClassGroup.objects.get(name=group)
+    except ClassGroup.DoesNotExist:
+        raise Http404
 
     exercises = get_exercises_by_date_and_by_group(date, group)
 
