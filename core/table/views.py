@@ -23,16 +23,29 @@ def get_weekday_name(weekday: int) -> str:
     ][weekday]
 
 
-def get_parity_name(parity: Literal["EVE", "ODD"]) -> Literal["Чет", "Нечет"]:
-    return "Чет" if parity == "EVE" else "Нечет"
+def inverse_parity(parity: Literal["EVE", "ODD"]) -> Literal["ODD", "EVE"]:
+    d = {
+        "EVE": "ODD",
+        "ODD": "EVE"
+    }
+    return d[parity]
 
 
 def get_week_parity(date: datetime.date) -> Literal["EVE", "ODD"]:
-    current_parity = date.isocalendar().week % 2 == 0
+    is_even = date.isocalendar().week % 2 == 0
+    parity = "EVE" if is_even else "ODD"
+
     if REVERSE_PARITY:
-        return "EVE" if current_parity else "ODD"
-    else:
-        return "ODD" if current_parity else "EVE"
+        return inverse_parity(parity)
+    return parity
+
+
+def get_parity_name(parity: Literal["EVE", "ODD"]) -> Literal["Чет", "Нечет"]:
+    d = {
+        "EVE": "Чет",
+        "ODD": "Нечет"
+    }
+    return d[parity]
 
 
 def get_weekday(date: datetime.date) -> Literal[0, 1, 2, 3, 4, 5, 6]:
