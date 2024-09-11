@@ -3,8 +3,8 @@ from table.models import Exercise, ClassGroup
 
 
 class ExerciseAdmin(admin.ModelAdmin):
-    list_display = ["name", "weekday", "time_start", "teacher", "auditory",
-                    "parity", "group"]
+    list_display = ["name", "group", "weekday", "time_start", "teacher", "auditory",
+                    "parity"]
     ordering = ("group", "weekday", "time_start")
 
 
