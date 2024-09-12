@@ -125,7 +125,6 @@ def render_date(request: WSGIRequest, group: str, date: datetime.date):
     current_parity_name = get_parity_name(current_parity)
 
     next_day = date + datetime.timedelta(days=1)
-    next_day_uri_part = next_day.strftime(DateConverter.format)
 
     return render(request, 'today.html', {
         "host": request.get_host(),
@@ -133,7 +132,7 @@ def render_date(request: WSGIRequest, group: str, date: datetime.date):
         "parity_name": current_parity_name,
         "exercises": today_exercises,
         "group": group,
-        "next_date": next_day_uri_part,
+        "next_date": next_day,
     })
 
 
