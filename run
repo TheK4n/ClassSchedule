@@ -17,11 +17,23 @@ cmd_build() {
 }
 
 cmd_collectstatic() {
-	docker run --rm --env-file "$ENVFILE" -v "${LOCAL_DB}:${CONTAINER_DB}" --name "${NAME}_static" --entrypoint ./manage.py "$IMAGE" collectstatic --noinput
+	docker run \
+        --rm \
+        --env-file "$ENVFILE" \
+        -v "${LOCAL_DB}:${CONTAINER_DB}" \
+        --name "${NAME}_static" \
+        --entrypoint ./manage.py \
+        "$IMAGE" collectstatic --noinput
 }
 
 cmd_migrate() {
-	docker run --rm --env-file "$ENVFILE" -v "${LOCAL_DB}:${CONTAINER_DB}" --name "${NAME}_migrate" --entrypoint ./manage.py "$IMAGE" migrate
+	docker run \
+        --rm \
+        --env-file "$ENVFILE" \
+        -v "${LOCAL_DB}:${CONTAINER_DB}" \
+        --name "${NAME}_migrate" \
+        --entrypoint ./manage.py \
+        "$IMAGE" migrate
 }
 
 cmd_all_build() {
@@ -32,12 +44,24 @@ cmd_all_build() {
 
 cmd_run() {
     local -r proc_count="$1"
-	docker run --env-file "$ENVFILE" -p "${OUTPORT}:80" -v "${LOCAL_DB}:${CONTAINER_DB}" --name "$NAME" "$IMAGE" "$proc_count"
+	docker run \
+        --env-file "$ENVFILE" \
+        -p "${OUTPORT}:80" \
+        -v "${LOCAL_DB}:${CONTAINER_DB}" \
+        --name "$NAME" \
+        "$IMAGE" "$proc_count"
 }
 
 cmd_rund() {
     local -r proc_count="$1"
-	docker run -d --restart=always --env-file "$ENVFILE" -p "${OUTPORT}:80" -v "${LOCAL_DB}:${CONTAINER_DB}" --name "$NAME" "$IMAGE" "$proc_count"
+	docker run \
+        -d \
+        --restart=always \
+        --env-file "$ENVFILE" \
+        -p "${OUTPORT}:80" \
+        -v "${LOCAL_DB}:${CONTAINER_DB}" \
+        --name "$NAME" \
+        "$IMAGE" "$proc_count"
 }
 
 cmd_stop() {
@@ -53,17 +77,24 @@ cmd_clean() {
 }
 
 cmd_createsuperuser() {
-    docker run --rm -it --env-file "$ENVFILE" -v "${LOCAL_DB}:${CONTAINER_DB}" --name "${NAME}_superuser" --entrypoint ./manage.py "$IMAGE" createsuperuser
+    docker run \
+        --rm \
+        -it \
+        --env-file "$ENVFILE" \
+        -v "${LOCAL_DB}:${CONTAINER_DB}" \
+        --name "${NAME}_superuser" \
+        --entrypoint ./manage.py \
+        "$IMAGE" createsuperuser
 }
 
 
 case "$1" in
-    build) shift;   cmd_all_build  ;;
-    run) shift;     cmd_run  "$@"      ;;
-    rund) shift;    cmd_rund "$@"      ;;
-    stop) shift;    cmd_stop       ;;
-    rm) shift;      cmd_rm         ;;
-    clean) shift;   cmd_clean      ;;
+    build) shift;           cmd_all_build        ;;
+    run) shift;             cmd_run "$@"         ;;
+    rund) shift;            cmd_rund "$@"        ;;
+    stop) shift;            cmd_stop             ;;
+    rm) shift;              cmd_rm               ;;
+    clean) shift;           cmd_clean            ;;
     createsuperuser) shift; cmd_createsuperuser  ;;
 
     *) cmd_run "$@" ;;
