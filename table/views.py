@@ -61,17 +61,17 @@ def render_groups(request: WSGIRequest):
     })
 
 
-def get_exercises_by_weekday_and_by_group(weekday: int, parity: Literal["EVE", "ODD"], group: str) -> list[Exercise]:
+def get_exercises_by_weekday_and_by_group(weekday: int, parity: Literal["EVE", "ODD"], group: ClassGroup) -> list[Exercise]:
     q = Q(parity=parity) | Q(parity="COM")
 
     return list(Exercise.objects \
-        .filter(group__name=group) \
+        .filter(group=group) \
         .filter(weekday=weekday) \
         .filter(q) \
         .order_by('time_start'))
 
 
-def get_exercises_by_date_and_by_group(date: datetime.date, group: str) -> list[Exercise]:
+def get_exercises_by_date_and_by_group(date: datetime.date, group: ClassGroup) -> list[Exercise]:
     weekday = get_weekday(date)
     week_parity = get_week_parity(date)
 
@@ -87,11 +87,8 @@ def get_all_groups(_: WSGIRequest):
     return JsonResponse(res)
 
 
-def get_table_by_date(request: WSGIRequest, group: str, date: datetime.date):
-    try:
-        _ = ClassGroup.objects.get(name=group)
-    except ClassGroup.DoesNotExist:
-        raise Http404
+def get_table_by_date(request: WSGIRequest, group_name: str, date: datetime.date):
+    group = get_object_or_404(ClassGroup, name=group_name)
 
     exercises = get_exercises_by_date_and_by_group(date, group)
 
@@ -112,11 +109,8 @@ def get_table_by_date(request: WSGIRequest, group: str, date: datetime.date):
     return JsonResponse(res)
 
 
-def render_date(request: WSGIRequest, group: str, date: datetime.date):
-    try:
-        _ = ClassGroup.objects.get(name=group)
-    except ClassGroup.DoesNotExist:
-        raise Http404
+def render_date(request: WSGIRequest, group_name: str, date: datetime.date):
+    group = get_object_or_404(ClassGroup, name=group_name)
 
     today_exercises = get_exercises_by_date_and_by_group(date, group)
 
@@ -136,7 +130,7 @@ def render_date(request: WSGIRequest, group: str, date: datetime.date):
     })
 
 
-def redirect_today(request: WSGIRequest, group: str):
+def redirect_today(request: WSGIRequest, group_name: str):
     today = datetime.date.today()
     today_uri_part = today.strftime(DateConverter.format)
-    return redirect(f'/{group}/{today_uri_part}')
+    return redirect(f'/{group_name}/{today_uri_part}')

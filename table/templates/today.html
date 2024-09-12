@@ -17,10 +17,10 @@
 
     <div class="buttons_container">
         <div class="button_inner">
-            <a class="button btn btn-primary custom-a-size" href="{% url 'redirect_today' group=group %}">Сегодняшний день</a>
+            <a class="button btn btn-primary custom-a-size" href="{% url 'redirect_today' group_name=group %}">Сегодняшний день</a>
         </div>
         <div class="button_inner">
-            <a class="button btn btn-primary custom-a-size" href="{% url 'render_date' group=group date=next_date %}">Завтрашний день</a>
+            <a class="button btn btn-primary custom-a-size" href="{% url 'render_date' group_name=group date=next_date %}">Завтрашний день</a>
         </div>
     </div>
 

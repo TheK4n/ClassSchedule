@@ -13,7 +13,7 @@
     <div class="buttons_container_groups">
         {% for group in groups %}
             <div class="button_inner">
-                <a class="button btn btn-primary custom-a-size" href="{% url 'redirect_today' group=group %}">{{ group.name }}</a>
+                <a class="button btn btn-primary custom-a-size" href="{% url 'redirect_today' group_name=group %}">{{ group.name }}</a>
             </div>
         {% endfor %}
     </div>
