@@ -10,5 +10,5 @@ git clone https://github.com/thek4n/ClassSchedule
 cd ClassSchedule
 ./run build
 ./run createsuperuser
-./run rund  # create container with 8000 port
+./run rund "$(nroc)"  # create container with 8000 port with nproc workers
 ```

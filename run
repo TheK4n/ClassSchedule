@@ -17,11 +17,11 @@ cmd_build() {
 }
 
 cmd_collectstatic() {
-	docker run --rm --env-file "$ENVFILE" -v "${LOCAL_DB}:${CONTAINER_DB}" --name "${NAME}_static" "$IMAGE" ./manage.py collectstatic --noinput
+	docker run --rm --env-file "$ENVFILE" -v "${LOCAL_DB}:${CONTAINER_DB}" --name "${NAME}_static" --entrypoint ./manage.py "$IMAGE" collectstatic --noinput
 }
 
 cmd_migrate() {
-	docker run --rm --env-file "$ENVFILE" -v "${LOCAL_DB}:${CONTAINER_DB}" --name "${NAME}_migrate" "$IMAGE" ./manage.py migrate
+	docker run --rm --env-file "$ENVFILE" -v "${LOCAL_DB}:${CONTAINER_DB}" --name "${NAME}_migrate" --entrypoint ./manage.py "$IMAGE" migrate
 }
 
 cmd_all_build() {
@@ -31,11 +31,13 @@ cmd_all_build() {
 }
 
 cmd_run() {
-	docker run --env-file "$ENVFILE" -p "${OUTPORT}:80" -v "${LOCAL_DB}:${CONTAINER_DB}" --name "$NAME" "$IMAGE"
+    local -r proc_count="$1"
+	docker run --env-file "$ENVFILE" -p "${OUTPORT}:80" -v "${LOCAL_DB}:${CONTAINER_DB}" --name "$NAME" "$IMAGE" "$proc_count"
 }
 
 cmd_rund() {
-	docker run -d --restart=always --env-file "$ENVFILE" -p "${OUTPORT}:80" -v "${LOCAL_DB}:${CONTAINER_DB}" --name "$NAME" "$IMAGE"
+    local -r proc_count="$1"
+	docker run -d --restart=always --env-file "$ENVFILE" -p "${OUTPORT}:80" -v "${LOCAL_DB}:${CONTAINER_DB}" --name "$NAME" "$IMAGE" "$proc_count"
 }
 
 cmd_stop() {
@@ -51,7 +53,7 @@ cmd_clean() {
 }
 
 cmd_createsuperuser() {
-    docker run --rm -it --env-file "$ENVFILE" -v "${LOCAL_DB}:${CONTAINER_DB}" --name "${NAME}_superuser" "$IMAGE" ./manage.py createsuperuser
+    docker run --rm -it --env-file "$ENVFILE" -v "${LOCAL_DB}:${CONTAINER_DB}" --name "${NAME}_superuser" --entrypoint ./manage.py "$IMAGE" createsuperuser
 }
 
 
@@ -63,8 +65,8 @@ fi
 
 case "$1" in
     build) shift;   cmd_all_build  ;;
-    run) shift;     cmd_run        ;;
-    rund) shift;    cmd_rund       ;;
+    run) shift;     cmd_run  "$@"      ;;
+    rund) shift;    cmd_rund "$@"      ;;
     stop) shift;    cmd_stop       ;;
     rm) shift;      cmd_rm         ;;
     clean) shift;   cmd_clean      ;;
