@@ -13,19 +13,29 @@
 
     <body>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
         {% block content %}{% endblock %}
 
         <div class="footer">
-            <div>
-                В данном расписании могут быть неточности, автор не несет ответственность за неактуальность, и вообще ни за что не несет :)
+            <div class="container">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <h3>Achtung!</h3>
+                        <p class="text-start">В данном расписании могут быть неточности, автор не несет ответственность за неактуальность, и вообще ни за что не несет :)</p>
+                    </div>
+                    <div class="col-sm-4">
+                        <h3>Author</h3>
+                        <p class="text-start">
+                            Author: <a href="https://t.me/thek4n">https://t.me/thek4n</a>
+                            <br>
+                            Sources: <a href="https://github.com/thek4n/ClassSchedule">https://github.com/thek4n/ClassSchedule</a>
+                        </p>
+                    </div>
+                    <!-- <div class="col-sm-4 d-flex align-items-center justify-content-center"> -->
+                    <!--     <img class="logo" src="{% static 'table/images/ksuha.jpeg' %}"></img> -->
+                    <!-- </div> -->
+                </div>
             </div>
-            <div>
-                Author: <a href="https://t.me/thek4n">https://t.me/thek4n</a>
-            </div>
-            <div>
-                Sources: <a href="https://github.com/thek4n/ClassSchedule">https://github.com/thek4n/ClassSchedule</a>
-            </div>
-            <img class="logo" src="{% static 'table/images/ksuha.jpeg' %}"></img>
         </div>
     </body>
 </html>
