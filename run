@@ -89,6 +89,7 @@ cmd_createsuperuser() {
 
 
 case "$1" in
+    static) shift;          cmd_collectstatic    ;;
     build) shift;           cmd_all_build        ;;
     run) shift;             cmd_run "$@"         ;;
     rund) shift;            cmd_rund "$@"        ;;
