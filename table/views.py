@@ -130,7 +130,6 @@ def render_date(request: WSGIRequest, group_name: str, date: datetime.date):
     })
 
 
-def redirect_today(request: WSGIRequest, group_name: str):
+def render_today(request: WSGIRequest, group_name: str):
     today = datetime.date.today()
-    today_uri_part = today.strftime(DateConverter.format)
-    return redirect(f'/{group_name}/{today_uri_part}')
+    return render_date(request, group_name, today)
