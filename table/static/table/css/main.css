@@ -1,0 +1,43 @@
+.buttons_container {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  justify-content: center;
+  display: flex;
+  position: fixed;
+  bottom: 20%;
+}
+
+.container-fluid{
+    padding: 0 !important;
+}
+
+.logo {
+    max-height: 25px;
+    max-width: 25px;
+}
+
+.header {
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  justify-content: center;
+  display: flex;
+  position: fixed;
+  top: 0%;
+  height: 20%;
+  background-color: #C9DABF;
+}
+
+.button {
+  border-radius: 15px;
+  background-color: #5F6F65;
+  color: #C9DABF;
+  border-color: #5F6F65;
+}
+
+.header_buttons {
+  position: fixed;
+  right: 5%;
+  top: 2%;
+}

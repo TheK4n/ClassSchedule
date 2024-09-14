@@ -87,8 +87,17 @@ cmd_createsuperuser() {
         "$IMAGE" createsuperuser
 }
 
+cmd_pull_rebuild_and_restart() {
+    git pull && \
+        cmd_build && \
+        cmd_stop && \
+        cmd_rm && \
+        cmd_rund 2
+}
+
 
 case "$1" in
+    static) shift;          cmd_collectstatic    ;;
     build) shift;           cmd_all_build        ;;
     run) shift;             cmd_run "$@"         ;;
     rund) shift;            cmd_rund "$@"        ;;
@@ -96,6 +105,7 @@ case "$1" in
     rm) shift;              cmd_rm               ;;
     clean) shift;           cmd_clean            ;;
     createsuperuser) shift; cmd_createsuperuser  ;;
+    rebuild) shift;         cmd_pull_rebuild_and_restart  ;;
 
     *) cmd_run "$@" ;;
 esac

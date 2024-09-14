@@ -5,7 +5,6 @@ from django.shortcuts import get_object_or_404, render, redirect
 from django.db.models import Q
 from django.core.handlers.wsgi import WSGIRequest
 from django.http import JsonResponse
-from django.http import Http404
 
 from core.settings import REVERSE_PARITY
 from .models import Exercise, ClassGroup
