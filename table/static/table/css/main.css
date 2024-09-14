@@ -1,20 +1,14 @@
-.buttons_container {
-  width: 100%;
-  margin-left: auto;
-  margin-right: auto;
-  justify-content: center;
-  display: flex;
-  position: fixed;
-  bottom: 20%;
-}
-
-.container-fluid{
-    padding: 0 !important;
-}
-
 .logo {
     max-height: 25px;
     max-width: 25px;
+}
+
+.footer {
+  display: flex;
+  position: absolute;
+  bottom: 0%;
+  text-align: center;
+  width: 100%
 }
 
 .header {
@@ -40,4 +34,10 @@
   position: fixed;
   right: 5%;
   top: 2%;
+}
+
+.buttons {
+  top: 50%;
+  position: absolute;
+  width: 100%;
 }

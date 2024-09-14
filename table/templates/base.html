@@ -8,6 +8,11 @@
         <link rel="stylesheet" href="{% static 'table/css/main.css' %}">
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        {% if DEBUG %}
+            <script type="text/javascript" src="http://livejs.com/live.js"></script>
+        {% endif %}
+
         {% block header %}{% endblock %}
     </head>
 
@@ -16,13 +21,9 @@
 
         {% block content %}{% endblock %}
 
-        <div class="footer">
+        <div class="footer mt-auto">
             <div class="container">
                 <div class="row">
-                    <div class="col-sm-4">
-                        <h3>Achtung!</h3>
-                        <p class="text-start">В данном расписании могут быть неточности, автор не несет ответственность за неактуальность, и вообще ни за что не несет :)</p>
-                    </div>
                     <div class="col-sm-4">
                         <h3>Author</h3>
                         <p class="text-start">
@@ -31,9 +32,13 @@
                             Sources: <a href="https://github.com/thek4n/ClassSchedule">https://github.com/thek4n/ClassSchedule</a>
                         </p>
                     </div>
-                    <!-- <div class="col-sm-4 d-flex align-items-center justify-content-center"> -->
-                    <!--     <img class="logo" src="{% static 'table/images/ksuha.jpeg' %}"></img> -->
-                    <!-- </div> -->
+                    <div class="col-sm-4">
+                        <h3>Achtung!</h3>
+                        <p class="text-start">В данном расписании могут быть неточности, автор не несет ответственность за неактуальность, и вообще ни за что не несет :)</p>
+                    </div>
+                    <div class="col-sm-4 d-flex align-items-center justify-content-center">
+                        <img class="logo" style="max-height: 50px; max-width: 50px;" src="{% static 'table/images/ksuha.jpeg' %}"></img>
+                    </div>
                 </div>
             </div>
         </div>

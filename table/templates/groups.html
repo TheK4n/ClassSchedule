@@ -10,11 +10,15 @@
         <div style="font-size: 35px">Группы</div>
     </div>
 
-    <div class="buttons_container_groups">
-        {% for group in groups %}
-            <div class="button_inner">
-                <a class="button btn btn-primary custom-a-size" href="{% url 'render_today' group_name=group %}">{{ group.name }}</a>
+    <div class="buttons">
+        <div class="container-fluid">
+            <div class="row text-center">
+                {% for group in groups %}
+                    <div class="col-sm-4">
+                        <a class="button btn btn-primary" href="{% url 'render_today' group_name=group %}">{{ group.name }}</a>
+                    </div>
+                {% endfor %}
             </div>
-        {% endfor %}
+        </div>
     </div>
 {% endblock %}

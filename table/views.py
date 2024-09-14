@@ -6,7 +6,7 @@ from django.db.models import Q
 from django.core.handlers.wsgi import WSGIRequest
 from django.http import JsonResponse
 
-from core.settings import REVERSE_PARITY
+from core.settings import REVERSE_PARITY, DEBUG
 from .models import Exercise, ClassGroup
 from .converters import DateConverter
 
@@ -57,6 +57,7 @@ def render_groups(request: WSGIRequest):
     return render(request, 'groups.html', {
         "host": request.get_host(),
         "groups": groups,
+        "DEBUG": DEBUG,
     })
 
 
@@ -126,6 +127,7 @@ def render_date(request: WSGIRequest, group_name: str, date: datetime.date):
         "exercises": today_exercises,
         "group": group,
         "next_date": next_day,
+        "DEBUG": DEBUG,
     })
 
 
