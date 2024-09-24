@@ -34,3 +34,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path("", include(static_urlpatterns)),
 ]
+
+if settings.URL_PREFIX:
+    urlpatterns = [path(f'{settings.URL_PREFIX}/', include(urlpatterns))]
