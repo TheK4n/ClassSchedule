@@ -5,7 +5,7 @@ set -eu
 
 
 IMAGE="schedule"
-OUTPORT=8000
+OUTPORT="127.0.0.1:8000"
 ENVFILE=".env"
 LOCAL_DB="./data"
 CONTAINER_DB="/app/data"
