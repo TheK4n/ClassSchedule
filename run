@@ -88,11 +88,11 @@ cmd_createsuperuser() {
 }
 
 cmd_pull_rebuild_and_restart() {
-    git pull && \
-        cmd_build && \
-        cmd_stop && \
-        cmd_rm && \
-        cmd_rund 2
+    git pull
+    cmd_build
+    cmd_stop
+    cmd_rm
+    cmd_rund 2
 }
 
 
