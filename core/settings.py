@@ -141,3 +141,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 REVERSE_PARITY = env.bool("REVERSE_PARITY", default=False)
+
+CSRF_COOKIE_SECURE = True
+CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS', subcast=str)

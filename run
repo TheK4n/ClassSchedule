@@ -5,6 +5,7 @@ set -eu
 
 
 IMAGE="schedule"
+INNERPORT="80"
 OUTPORT="127.0.0.1:8000"
 ENVFILE=".env"
 LOCAL_DB="./data"
@@ -43,22 +44,22 @@ cmd_all_build() {
 }
 
 cmd_run() {
-    local -r proc_count="$1"
+    local -r proc_count="${1:-"$(nproc)"}"
 	docker run \
         --env-file "$ENVFILE" \
-        -p "${OUTPORT}:80" \
+        -p "${OUTPORT}:${INNERPORT}" \
         -v "${LOCAL_DB}:${CONTAINER_DB}" \
         --name "$NAME" \
         "$IMAGE" "$proc_count"
 }
 
 cmd_rund() {
-    local -r proc_count="$1"
+    local -r proc_count="${1:-"$(nproc)"}"
 	docker run \
         -d \
         --restart=always \
         --env-file "$ENVFILE" \
-        -p "${OUTPORT}:80" \
+        -p "${OUTPORT}:${INNERPORT}" \
         -v "${LOCAL_DB}:${CONTAINER_DB}" \
         --name "$NAME" \
         "$IMAGE" "$proc_count"
@@ -92,8 +93,13 @@ cmd_pull_rebuild_and_restart() {
     cmd_build
     cmd_stop
     cmd_rm
-    cmd_rund 2
+    cmd_rund
 }
+
+if [[ ! -v 1 ]]; then
+    cmd_run
+    exit 0
+fi
 
 
 case "$1" in

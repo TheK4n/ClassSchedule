@@ -14,4 +14,4 @@ RUN pip install --no-cache-dir -r requirements-prod.txt
 COPY . .
 
 ENTRYPOINT ["gunicorn", "core.wsgi:application", "-b", "0.0.0.0:80", "-w"]
-CMD ["2"]
+CMD ["1"]
