@@ -30,8 +30,12 @@ def inverse_parity(parity: Literal["EVE", "ODD"]) -> Literal["ODD", "EVE"]:
     return d[parity]
 
 
+def get_week_number(date: datetime.date) -> int:
+    return date.isocalendar().week
+
+
 def get_week_parity(date: datetime.date) -> Literal["EVE", "ODD"]:
-    is_even = date.isocalendar().week % 2 == 0
+    is_even = get_week_number(date) % 2 == 0
     parity = "EVE" if is_even else "ODD"
 
     if REVERSE_PARITY:
@@ -60,17 +64,28 @@ def render_groups(request: WSGIRequest):
     })
 
 
-def get_exercises_by_weekday_and_by_group(weekday: int, parity: Literal["EVE", "ODD"], group: ClassGroup) -> list[Exercise]:
+def get_exercises_by_weekday_and_by_group(
+    weekday: int,
+    parity: Literal["EVE", "ODD"],
+    group: ClassGroup
+) -> list[Exercise]:
+
     q = Q(parity=parity) | Q(parity="COM")
 
-    return list(Exercise.objects \
+    return list(
+        Exercise.objects \
         .filter(group=group) \
         .filter(weekday=weekday) \
         .filter(q) \
-        .order_by('time_start'))
+        .order_by('time_start')
+    )
 
 
-def get_exercises_by_date_and_by_group(date: datetime.date, group: ClassGroup) -> list[Exercise]:
+def get_exercises_by_date_and_by_group(
+    date: datetime.date,
+    group: ClassGroup
+) -> list[Exercise]:
+
     weekday = get_weekday(date)
     week_parity = get_week_parity(date)
 
