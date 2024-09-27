@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('table', '0002_rename__class_exercise_auditory_and_more'),
+        ('schedule', '0002_rename__class_exercise_auditory_and_more'),
     ]
 
     operations = [

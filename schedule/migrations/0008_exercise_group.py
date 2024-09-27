@@ -7,14 +7,14 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('table', '0007_classgroup'),
+        ('schedule', '0007_classgroup'),
     ]
 
     operations = [
         migrations.AddField(
             model_name='exercise',
             name='group',
-            field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.PROTECT, to='table.classgroup'),
+            field=models.ForeignKey(default=1, on_delete=django.db.models.deletion.PROTECT, to='schedule.classgroup'),
             preserve_default=False,
         ),
     ]

@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('table', '0004_remove_exercise_is_even_exercise_parity'),
+        ('schedule', '0004_remove_exercise_is_even_exercise_parity'),
     ]
 
     operations = [

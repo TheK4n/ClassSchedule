@@ -1,5 +1,5 @@
 from django.contrib import admin
-from table.models import Exercise, ClassGroup
+from schedule.models import Exercise, ClassGroup
 
 
 class ExerciseAdmin(admin.ModelAdmin):

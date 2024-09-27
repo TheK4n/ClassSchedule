@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('table', '0005_alter_exercise_time_start'),
+        ('schedule', '0005_alter_exercise_time_start'),
     ]
 
     operations = [

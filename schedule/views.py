@@ -104,7 +104,7 @@ def get_all_groups(_: WSGIRequest):
     })
 
 
-def get_table_by_date(_: WSGIRequest, group_name: str, date: datetime.date):
+def get_schedule_by_date(_: WSGIRequest, group_name: str, date: datetime.date):
     group = get_object_or_404(ClassGroup, name=group_name)
 
     exercises = get_exercises_by_date_and_by_group(date, group)

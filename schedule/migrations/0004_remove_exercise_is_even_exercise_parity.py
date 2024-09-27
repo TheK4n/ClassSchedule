@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('table', '0003_alter_exercise_is_even'),
+        ('schedule', '0003_alter_exercise_is_even'),
     ]
 
     operations = [
