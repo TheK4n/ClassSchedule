@@ -1,14 +1,13 @@
 import datetime
 from typing import Literal
 
-from django.shortcuts import get_object_or_404, render, redirect
+from django.shortcuts import get_object_or_404, render
 from django.db.models import Q
 from django.core.handlers.wsgi import WSGIRequest
 from django.http import JsonResponse
 
 from core.settings import REVERSE_PARITY, DEBUG
 from .models import Exercise, ClassGroup
-from .converters import DateConverter
 
 
 def get_weekday_name(weekday: int) -> str:
@@ -78,16 +77,19 @@ def get_exercises_by_date_and_by_group(date: datetime.date, group: ClassGroup) -
     return get_exercises_by_weekday_and_by_group(weekday, week_parity, group)
 
 
+def get_all_groups_names():
+    return [group.name for group in ClassGroup.objects.all()]
+
+
 def get_all_groups(_: WSGIRequest):
-    res = {"groups": []}
+    groups_names = get_all_groups_names()
 
-    for group in ClassGroup.objects.all():
-        res["groups"].append(group.name)
+    return JsonResponse({
+        "groups": groups_names,
+    })
 
-    return JsonResponse(res)
 
-
-def get_table_by_date(request: WSGIRequest, group_name: str, date: datetime.date):
+def get_table_by_date(_: WSGIRequest, group_name: str, date: datetime.date):
     group = get_object_or_404(ClassGroup, name=group_name)
 
     exercises = get_exercises_by_date_and_by_group(date, group)
@@ -96,7 +98,11 @@ def get_table_by_date(request: WSGIRequest, group_name: str, date: datetime.date
     weekday_name = get_weekday_name(weekday)
     week_parity = get_week_parity(date)
 
-    res = {"weekday": weekday_name, "week_parity": week_parity,  "exercises": []}
+    res = {
+        "weekday": weekday_name,
+        "week_parity": week_parity,
+        "exercises": []
+    }
 
     for exercise in exercises:
         res["exercises"].append({
@@ -109,28 +115,36 @@ def get_table_by_date(request: WSGIRequest, group_name: str, date: datetime.date
     return JsonResponse(res)
 
 
+def calculate_next_day(date: datetime.date) -> datetime.date:
+    return date + datetime.timedelta(days=1)
+
+
 def render_date(request: WSGIRequest, group_name: str, date: datetime.date):
     group = get_object_or_404(ClassGroup, name=group_name)
 
-    today_exercises = get_exercises_by_date_and_by_group(date, group)
+    day_exercises = get_exercises_by_date_and_by_group(date, group)
 
-    current_weekday_name = get_weekday_name(date.weekday())
+    current_weekday_name = get_weekday_name(get_weekday(date))
     current_parity = get_week_parity(date)
     current_parity_name = get_parity_name(current_parity)
 
-    next_day = date + datetime.timedelta(days=1)
+    next_day = calculate_next_day(date)
 
     return render(request, 'today.html', {
         "host": request.get_host(),
         "weekday_name": current_weekday_name,
         "parity_name": current_parity_name,
-        "exercises": today_exercises,
+        "exercises": day_exercises,
         "group": group,
         "next_date": next_day,
         "DEBUG": DEBUG,
     })
 
 
+def get_today_date() -> datetime.date:
+    return datetime.date.today()
+
+
 def render_today(request: WSGIRequest, group_name: str):
-    today = datetime.date.today()
+    today = get_today_date()
     return render_date(request, group_name, today)
