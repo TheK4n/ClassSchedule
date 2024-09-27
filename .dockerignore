@@ -5,7 +5,7 @@ db.sqlite3
 static
 Dockerfile
 README.md
-requirements-dev.txt
+requirements/dev.txt
 env.example
 
 run
