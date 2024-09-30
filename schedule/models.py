@@ -23,6 +23,7 @@ class Exercise(models.Model):
         THURSDAY = 3, "Четверг"
         FRIDAY = 4, "Пятница"
         SATURDAY = 5, "Суббота"
+        SUNDAY = 6, "Воскресенье"
 
     id = models.BigAutoField(primary_key=True)
     group = models.ForeignKey(ClassGroup, on_delete=models.PROTECT)
@@ -30,8 +31,8 @@ class Exercise(models.Model):
         null=False,
         choices=Weekday.choices,
         validators=[
-            MaxValueValidator(5),
-            MinValueValidator(0)
+            MinValueValidator(0),
+            MaxValueValidator(6),
         ]
     )
     time_start = models.TimeField()
