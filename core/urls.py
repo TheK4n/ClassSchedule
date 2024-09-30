@@ -11,7 +11,7 @@ static_urlpatterns = [
 
 urlpatterns = [
     path('', include('schedule.urls')),
-    path('admin/', admin.site.urls),
+    path(f'{settings.ADMIN_URL}/', admin.site.urls),
     path('', include(static_urlpatterns)),
 ]
 

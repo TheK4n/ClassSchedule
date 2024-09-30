@@ -31,9 +31,7 @@ DEBUG = env.bool('DEBUG', default=False)
 ALLOWED_HOSTS = env.list("ALLOWED_HOSTS", subcast=str)
 
 URL_PREFIX = env.str("URL_PREFIX", default=None)
-
-
-# Application definition
+ADMIN_URL = env.str("ADMIN_URL", default="admin")
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -110,7 +108,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
-
+FIRST_DAY_OF_WEEK = 1
 LANGUAGE_CODE = 'RU-ru'
 
 TIME_ZONE = 'Europe/Moscow'
@@ -120,7 +118,6 @@ TIME_INPUT_FORMATS = ('%H:%M',)
 TIME_FORMAT = 'g:i A'
 
 USE_I18N = True
-
 USE_TZ = True
 
 
@@ -142,3 +139,4 @@ CSRF_COOKIE_SECURE = True
 CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS', subcast=str)
 SESSION_COOKIE_SECURE=True
 SECURE_SSL_REDIRECT=False
+APPEND_SLASH = True
