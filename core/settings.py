@@ -14,12 +14,7 @@ from pathlib import Path
 
 from environs import Env
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 
 env = Env()
@@ -92,6 +87,7 @@ DATABASES = {
     }
 }
 
+CONN_MAX_AGE = 60
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
@@ -144,3 +140,5 @@ REVERSE_PARITY = env.bool("REVERSE_PARITY", default=False)
 
 CSRF_COOKIE_SECURE = True
 CSRF_TRUSTED_ORIGINS = env.list('CSRF_TRUSTED_ORIGINS', subcast=str)
+SESSION_COOKIE_SECURE=True
+SECURE_SSL_REDIRECT=False
