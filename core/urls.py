@@ -23,7 +23,6 @@ if settings.URL_PREFIX:
     ]
 
 
-
 def pingpong(_: WSGIRequest):
     return HttpResponse("pong")
 
