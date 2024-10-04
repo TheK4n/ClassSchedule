@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.core.handlers.wsgi import WSGIRequest
+from django.shortcuts import HttpResponse
 from django.urls import path, include, re_path
 from django.views.static import serve
 
@@ -19,3 +21,14 @@ if settings.URL_PREFIX:
     urlpatterns = [
         path(f'{settings.URL_PREFIX}/', include(urlpatterns)),
     ]
+
+
+
+def pingpong(_: WSGIRequest):
+    return HttpResponse("pong")
+
+
+urlpatterns = [
+    path('ping/', pingpong),
+    path('', include(urlpatterns)),
+]
