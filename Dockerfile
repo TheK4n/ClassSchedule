@@ -7,10 +7,10 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
-COPY requirements/prod.txt requirements-prod.txt
+COPY requirements/prod.txt requirements/prod.txt
 
 RUN apk --no-cache add curl && \
-    pip install --no-cache-dir -r requirements-prod.txt
+    pip install --no-cache-dir -r requirements/prod.txt
 
 COPY . .
 

@@ -1,14 +1,16 @@
 .env
-venv
 
 db.sqlite3
-static
 Dockerfile
 README.md
-requirements/dev.txt
 env.example
 
+requirements
+!requirements/prod.txt
+
+*/static/
 run
+venv/
 data/
 .gitignore
 .git

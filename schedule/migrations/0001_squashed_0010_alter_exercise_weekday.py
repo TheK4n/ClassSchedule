@@ -64,7 +64,6 @@ class Migration(migrations.Migration):
                     max_length=3
                 )),
                 ('group', models.ForeignKey(
-                    default=1,
                     on_delete=django.db.models.deletion.PROTECT,
                     to='schedule.classgroup'
                 )),
