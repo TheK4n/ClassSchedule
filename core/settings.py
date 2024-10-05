@@ -14,11 +14,11 @@ from pathlib import Path
 
 from environs import Env
 
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 env = Env()
-env.read_env()
 
 
 # SECURITY WARNING: keep the secret key used in production secret!
