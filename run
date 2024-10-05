@@ -97,22 +97,21 @@ cmd_pull_rebuild_and_restart() {
 }
 
 if [[ ! -v 1 ]]; then
-    cmd_run
+    cmd_run && cmd_rm
     exit 0
 fi
 
 
 case "$1" in
-    static) shift;          cmd_collectstatic    ;;
-    build) shift;           cmd_all_build        ;;
-    run) shift;             cmd_run "$@"         ;;
-    rund) shift;            cmd_rund "$@"        ;;
-    stop) shift;            cmd_stop             ;;
-    rm) shift;              cmd_rm               ;;
-    clean) shift;           cmd_clean            ;;
-    createsuperuser) shift; cmd_createsuperuser  ;;
+    build) shift;           cmd_all_build          ;;
+    run) shift;             cmd_run "$@"           ;;
+    rund) shift;            cmd_rund "$@"          ;;
+    stop) shift;            cmd_stop               ;;
+    rm) shift;              cmd_rm                 ;;
+    clean) shift;           cmd_clean              ;;
+    createsuperuser) shift; cmd_createsuperuser    ;;
     rebuild) shift;         cmd_pull_rebuild_and_restart  ;;
 
-    *) cmd_run "$@" ;;
+    *) cmd_run "$@" && cmd_rm ;;
 esac
 exit 0
