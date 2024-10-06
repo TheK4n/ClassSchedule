@@ -3,7 +3,7 @@
 db.sqlite3
 Dockerfile
 README.md
-env.example
+env.sample
 
 requirements
 !requirements/prod.txt
