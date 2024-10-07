@@ -4,7 +4,7 @@ from typing import Literal
 from django.shortcuts import get_object_or_404, render
 from django.db.models import Q
 from django.core.handlers.wsgi import WSGIRequest
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 
 from core.settings import REVERSE_PARITY, DEBUG
 from .models import Exercise, ClassGroup
@@ -92,11 +92,11 @@ def get_exercises_by_date_and_by_group(
     return get_exercises_by_weekday_and_by_group(weekday, week_parity, group)
 
 
-def get_all_groups_names():
+def get_all_groups_names() -> list[str]:
     return [group.name for group in ClassGroup.objects.all()]
 
 
-def get_all_groups(_: WSGIRequest):
+def get_all_groups(_: WSGIRequest) -> JsonResponse:
     groups_names = get_all_groups_names()
 
     return JsonResponse({
@@ -104,7 +104,11 @@ def get_all_groups(_: WSGIRequest):
     })
 
 
-def get_schedule_by_date(_: WSGIRequest, group_name: str, date: datetime.date):
+def get_schedule_by_date(
+    _: WSGIRequest,
+    group_name: str,
+    date: datetime.date
+) -> JsonResponse:
     group = get_object_or_404(ClassGroup, name=group_name)
 
     exercises = get_exercises_by_date_and_by_group(date, group)
@@ -134,7 +138,7 @@ def calculate_next_day(date: datetime.date) -> datetime.date:
     return date + datetime.timedelta(days=1)
 
 
-def render_date(request: WSGIRequest, group_name: str, date: datetime.date):
+def render_date(request: WSGIRequest, group_name: str, date: datetime.date) -> HttpResponse:
     group = get_object_or_404(ClassGroup, name=group_name)
 
     day_exercises = get_exercises_by_date_and_by_group(date, group)
@@ -160,6 +164,6 @@ def get_today_date() -> datetime.date:
     return datetime.date.today()
 
 
-def render_today(request: WSGIRequest, group_name: str):
+def render_today(request: WSGIRequest, group_name: str) -> HttpResponse:
     today = get_today_date()
     return render_date(request, group_name, today)
