@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
 
 set -eu
@@ -14,27 +14,27 @@ NAME="schedule"
 
 
 cmd_build() {
-	docker build -t "$IMAGE" .
+	docker build -t "${IMAGE}" .
 }
 
 cmd_collectstatic() {
 	docker run \
         --rm \
-        --env-file "$ENVFILE" \
+        --env-file "${ENVFILE}" \
         -v "${LOCAL_DB}:${CONTAINER_DB}" \
         --name "${NAME}_static" \
         --entrypoint ./manage.py \
-        "$IMAGE" collectstatic --noinput
+        "${IMAGE}" collectstatic --noinput
 }
 
 cmd_migrate() {
 	docker run \
         --rm \
-        --env-file "$ENVFILE" \
+        --env-file "${ENVFILE}" \
         -v "${LOCAL_DB}:${CONTAINER_DB}" \
         --name "${NAME}_migrate" \
         --entrypoint ./manage.py \
-        "$IMAGE" migrate
+        "${IMAGE}" migrate
 }
 
 cmd_all_build() {
@@ -44,48 +44,48 @@ cmd_all_build() {
 }
 
 cmd_run() {
-    local -r proc_count="${1:-"$(nproc)"}"
+    proc_count="${1:-"$(nproc)"}"
 	docker run \
-        --env-file "$ENVFILE" \
+        --env-file "${ENVFILE}" \
         -p "${OUTPORT}:${INNERPORT}" \
         -v "${LOCAL_DB}:${CONTAINER_DB}" \
-        --name "$NAME" \
-        "$IMAGE" "$proc_count"
+        --name "${NAME}" \
+        "${IMAGE}" "${proc_count}"
 }
 
 cmd_rund() {
-    local -r proc_count="${1:-"$(nproc)"}"
+    proc_count="${1:-"$(nproc)"}"
 	docker run \
         -d \
         --restart=always \
-        --env-file "$ENVFILE" \
+        --env-file "${ENVFILE}" \
         -p "${OUTPORT}:${INNERPORT}" \
         -v "${LOCAL_DB}:${CONTAINER_DB}" \
-        --name "$NAME" \
-        "$IMAGE" "$proc_count"
+        --name "${NAME}" \
+        "${IMAGE}" "${proc_count}"
 }
 
 cmd_stop() {
-    docker stop "$NAME"
+    docker stop "${NAME}"
 }
 
 cmd_rm() {
-    docker rm "$NAME"
+    docker rm "${NAME}"
 }
 
 cmd_clean() {
-    docker rmi "$IMAGE"
+    docker rmi "${IMAGE}"
 }
 
 cmd_createsuperuser() {
     docker run \
         --rm \
         -it \
-        --env-file "$ENVFILE" \
+        --env-file "${ENVFILE}" \
         -v "${LOCAL_DB}:${CONTAINER_DB}" \
         --name "${NAME}_superuser" \
         --entrypoint ./manage.py \
-        "$IMAGE" createsuperuser
+        "${IMAGE}" createsuperuser
 }
 
 cmd_pull_rebuild_and_restart() {
@@ -96,13 +96,13 @@ cmd_pull_rebuild_and_restart() {
     cmd_rund
 }
 
-if [[ ! -v 1 ]]; then
+if [ -z "${1+x}" ]; then
     cmd_run && cmd_rm
     exit 0
 fi
 
 
-case "$1" in
+case "${1}" in
     build) shift;           cmd_all_build          ;;
     run) shift;             cmd_run "$@"           ;;
     rund) shift;            cmd_rund "$@"          ;;
